@@ -113,7 +113,7 @@ case class Codegen(options: CodegenOptions, namingStrategy: NamingStrategy) {
       val simpleColumn = SimpleColumn(tableName, colName)
       val ref = foreignKeys.find(_.from == simpleColumn).map(_.to)
 
-      val typ = cols.getString(TYPE_NAME)
+      val typ = cols.getString(TYPE_NAME).toLowerCase
       columnType2scalaType.get(typ).map { scalaType =>
         Right(Column(
           tableName,

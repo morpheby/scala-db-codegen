@@ -31,7 +31,11 @@ object TypeMap {
     "timestamp" -> "java.util.Date",
     "bytea" -> "Array[Byte]", // PostgreSQL
     "uuid" -> "java.util.UUID", // H2, PostgreSQL
-    "json" -> "String" // PostgreSQL
+    "json" -> "String", // PostgreSQL
+    "int unsigned" -> "Int", // MySQL
+    "char" -> "String", // MySQL
+    "bigint" -> "BigInt", // MySQL
+    "decimal" -> "BigDecimal", // MySQL
   )
 }
 
