@@ -49,6 +49,7 @@ lazy val `scala-db-codegen` =
         "io.getquill" %% "quill-core" % "2.2.0",
         "com.h2database" % "h2" % "1.4.196",
         "org.postgresql" % "postgresql" % "42.1.4",
+        "mysql" % "mysql-connector-java" % "5.1.44",
         "com.github.alexarchambault" %% "case-app" % "1.2.0",
         "org.scalatest" %% "scalatest" % "3.0.4" % "test"
       )
