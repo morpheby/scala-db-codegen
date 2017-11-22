@@ -26,7 +26,7 @@ case class CodegenOptions(
     @HelpMessage("only tested with postgresql") jdbcDriver: String = "org.postgresql.Driver",
     @HelpMessage(
       "top level imports of generated file"
-    ) imports: String = """import io.getquill.WrappedValue""",
+    ) imports: String = """""",
     @HelpMessage(
       "package name for generated classes"
     ) `package`: String = "tables",
