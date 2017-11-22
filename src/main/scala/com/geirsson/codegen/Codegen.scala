@@ -1,14 +1,12 @@
 package com.geirsson.codegen
 
 import java.io.File
-import java.io.PrintStream
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 
-import caseapp.AppOf
 import caseapp._
 import com.typesafe.scalalogging.Logger
 import io.getquill.NamingStrategy
@@ -40,13 +38,17 @@ case class CodegenOptions(
     ) excludedTables: List[String] = List("schema_version"),
     @HelpMessage(
       "Write generated code to this filename. Prints to stdout if not set."
-    ) file: Option[String] = None
-) { }
+    ) file: Option[String] = None,
+    @HelpMessage(
+      "Naming strategy to use"
+    ) namingStrategy: NamingStrategy with SupportedNamingStrategies = SnakeCaseReverse,
+)
 
-case class Codegen(options: CodegenOptions, namingStrategy: NamingStrategy) {
+case class Codegen(options: CodegenOptions) {
   import Codegen._
   val excludedTables = options.excludedTables.toSet
   val columnType2scalaType = options.typeMap.pairs.toMap
+  val namingStrategy = options.namingStrategy
 
   def results(resultSet: ResultSet): Iterator[ResultSet] = {
     new Iterator[ResultSet] {
@@ -222,6 +224,7 @@ case class Codegen(options: CodegenOptions, namingStrategy: NamingStrategy) {
 }
 
 object Codegen extends CaseApp[CodegenOptions] {
+
   val TABLE_NAME = "TABLE_NAME"
   val COLUMN_NAME = "COLUMN_NAME"
   val TYPE_NAME = "TYPE_NAME"
@@ -242,9 +245,9 @@ object Codegen extends CaseApp[CodegenOptions] {
           remainingArgs: RemainingArgs): Unit = {
     val outstream = System.out
 
-    if (remainingArgs.args.size != 0) {
+    if (remainingArgs.args.nonEmpty) {
       outstream.println("Invalid options specified")
-      CaseApp.printUsage()
+      usageAsked()
     }
 
     codegenOptions.file.foreach { x =>
@@ -257,7 +260,8 @@ object Codegen extends CaseApp[CodegenOptions] {
       DriverManager.getConnection(codegenOptions.url,
                                   codegenOptions.user,
                                   codegenOptions.password)
-    val codegen = Codegen(codegenOptions, SnakeCaseReverse)
+
+    val codegen = Codegen(codegenOptions)
     val plainForeignKeys = codegen.getForeignKeys(db)
 
     val foreignKeys = plainForeignKeys.map { fk =>
